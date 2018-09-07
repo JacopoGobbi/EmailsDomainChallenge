@@ -5,17 +5,20 @@ object Main {
     """[A-z0-9]+@([A-z0-9]+)\.[A-z0-9]+""".r
 
   def main(args: Array[String]): Unit = {
-    outputFirstTenDomains(args).foreach(println)
+    outputFirstTenDomains(args).foreach {
+      case (element, frequency) =>
+        println(s"$element $frequency")
+    }
   }
 
-  def outputFirstTenDomains(emails: Array[String]): Array[String] =
+  def outputFirstTenDomains(emails: Array[String]): Array[(String, Int)] =
     emails.flatMap {
       case EmailPattern(domain) =>
         Some(domain)
       case _ =>
         None
     }.groupBy(identity).collect {
-      case (x, _) =>
-        x
+      case (element, occurrences) =>
+        (element, occurrences.length)
     }.toArray
 }

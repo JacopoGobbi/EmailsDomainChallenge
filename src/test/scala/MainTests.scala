@@ -1,6 +1,5 @@
 import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
 
-import scala.collection.mutable
 import scala.util.Random
 
 class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
@@ -22,16 +21,20 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
     }
     scenario("Collect input domains") {
 
-      val expected: Array[String] = "yahoo gmail live".split(" ")
+      val expected = List(
+        "yahoo" -> 123,
+        "gmail" -> 1234,
+        "live" -> 54321,
+      )
 
       Given("A list of emails with less than 10 domains")
 
-      val input = expected.flatMap { domain =>
-        (1 to 5) map(_ => s"${(Random.alphanumeric take 10 mkString).toLowerCase}@$domain.com")
-      }
+      val input = expected.flatMap {
+        case (domain, frequency) =>
+          (1 to frequency) map (_ => s"${Random.alphanumeric take 10 mkString}@$domain.com")
+      }.toArray
 
       When("executing the program")
-      input.foreach(println)
       val output = Main.outputFirstTenDomains(input)
 
       Then("all the input domains should be retrieved")
