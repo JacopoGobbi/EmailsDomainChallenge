@@ -1,3 +1,4 @@
+import scala.collection.immutable.ListMap
 import scala.util.matching.Regex
 
 object Main {
@@ -11,8 +12,8 @@ object Main {
     }
   }
 
-  def outputFirstTenDomains(emails: Array[String]): Array[(String, Int)] =
-    emails.flatMap {
+  def outputFirstTenDomains(emails: Array[String]): Array[(String, Int)] = {
+    val domainAndFrequencies = emails.flatMap {
       case EmailPattern(domain) =>
         Some(domain)
       case _ =>
@@ -20,5 +21,7 @@ object Main {
     }.groupBy(identity).collect {
       case (element, occurrences) =>
         (element, occurrences.length)
-    }.toArray
+    }
+    ListMap(domainAndFrequencies.toSeq.sortWith(_._2 > _._2).take(10):_*).toArray
+  }
 }

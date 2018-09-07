@@ -21,7 +21,7 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
     }
     scenario("Collect input domains") {
 
-      val expected = List(
+      val expected = Map(
         "yahoo" -> 123,
         "gmail" -> 1234,
         "live" -> 54321,
@@ -38,6 +38,39 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
       val output = Main.outputFirstTenDomains(input)
 
       Then("all the input domains should be retrieved")
+      output should contain theSameElementsAs expected
+    }
+    scenario("Collect input domains when more than 10") {
+
+      val expected = Map(
+        "yahoo" -> 1234,
+        "gmail" -> 4321,
+        "live" -> 323,
+        "yandex" -> 4000,
+        "tin" -> 13,
+        "outlook" -> 32,
+        "credem" -> 53,
+        "unicredit" -> 111,
+        "kahoot" -> 90,
+        "messenger" -> 100,
+      )
+
+      val inputDomainsWithFrequency = Map(
+        ("msn", 11),
+        ("fake", 12)
+      ) ++ expected
+
+      Given("A list of emails with 12 different domains")
+
+      val input = inputDomainsWithFrequency.flatMap {
+        case (domain, frequency) =>
+          (1 to frequency) map (_ => s"${Random.alphanumeric take 10 mkString}@$domain.com")
+      }.toArray
+
+      When("executing the program")
+      val output = Main.outputFirstTenDomains(input)
+
+      Then("Just the 10 most frequent domains should be returned with their frequency")
       output should contain theSameElementsAs expected
     }
   }
