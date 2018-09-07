@@ -12,7 +12,7 @@ object Main {
     }
   }
 
-  def outputFirstTenDomains(emails: Array[String]): Array[(String, Int)] = {
+  def outputFirstTenDomains(emails: Array[String]): Map[String, Int] = {
     val domainAndFrequencies = emails.flatMap {
       case EmailPattern(domain) =>
         Some(domain)
@@ -22,6 +22,6 @@ object Main {
       case (element, occurrences) =>
         (element, occurrences.length)
     }
-    ListMap(domainAndFrequencies.toSeq.sortWith(_._2 > _._2).take(10):_*).toArray
+    ListMap(domainAndFrequencies.toSeq.sortWith(_._2 > _._2).take(10):_*)
   }
 }

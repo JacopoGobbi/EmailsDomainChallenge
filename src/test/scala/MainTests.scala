@@ -10,13 +10,13 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
   feature("Outputs the 10 domains or less domains that appear the most often") {
     scenario("No domain present") {
 
-      Given("An empty list of emails")
+      Given("an empty list of emails")
       val input = Array[String]()
 
       When("executing the program")
       val output = Main.outputFirstTenDomains(input)
 
-      Then("no domain should be return as output")
+      Then("no domain should be returned")
       output shouldBe empty
     }
     scenario("Collect input domains") {
@@ -27,7 +27,7 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
         "live" -> 54321,
       )
 
-      Given("A list of emails with less than 10 domains")
+      Given("a list of emails with less than 10 different domains")
 
       val input = expected.flatMap {
         case (domain, frequency) =>
@@ -37,7 +37,7 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
       When("executing the program")
       val output = Main.outputFirstTenDomains(input)
 
-      Then("all the input domains should be retrieved")
+      Then("all the domains in input should be retrieved with their frequencies")
       output should contain theSameElementsAs expected
     }
     scenario("Collect input domains when more than 10") {
@@ -71,6 +71,25 @@ class MainTests extends FeatureSpec with GivenWhenThen with Matchers {
       val output = Main.outputFirstTenDomains(input)
 
       Then("Just the 10 most frequent domains should be returned with their frequency")
+      output should contain theSameElementsAs expected
+    }
+    scenario("Invalid email") {
+
+      val expected = Map("yahoo" -> 2)
+
+      Given("A list of emails mixed with invalid emails")
+
+      val input = Array(
+        s"${Random.alphanumeric take 10 mkString}@yahoo.com",
+        s"${Random.alphanumeric take 10 mkString}@yahoo.com",
+        s"@@WRONG_EMAIL@yahoo.com",
+        "wrongemail@test@ciao.com"
+      )
+
+      When("executing the program")
+      val output = Main.outputFirstTenDomains(input)
+
+      Then("all the input domains should be retrieved")
       output should contain theSameElementsAs expected
     }
   }
